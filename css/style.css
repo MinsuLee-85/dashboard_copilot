@@ -1,0 +1,624 @@
+/* 대시보드 전체에서 반복해서 사용하는 색상과 표면 스타일을 한곳에서 관리합니다. */
+:root {
+  color-scheme: light;
+  --page-bg: #f4f7fb;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --text: #17243a;
+  --text-muted: #718096;
+  --border: #e6ebf2;
+  --blue: #356ae6;
+  --blue-soft: #edf3ff;
+  --green: #13a681;
+  --rose: #e05b73;
+  --amber: #d89120;
+  --shadow: 0 8px 28px rgba(30, 51, 84, 0.055);
+}
+
+/* 브라우저 기본 여백과 박스 계산 차이를 없애 반응형 레이아웃을 예측하기 쉽게 합니다. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(ellipse at 90% 0%, rgba(70, 117, 229, 0.07), transparent 34rem),
+    var(--page-bg);
+  color: var(--text);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.page-shell {
+  width: min(1440px, calc(100% - 56px));
+  margin: 0 auto;
+  padding: 34px 0 28px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  margin-bottom: 27px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  place-items: center;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #477cf0, #315bd0);
+  box-shadow: 0 8px 18px rgba(53, 106, 230, 0.2);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.header-copy h1,
+.panel-heading h2,
+.upload-copy h2 {
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+
+.header-copy h1 {
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 750;
+}
+
+.eyebrow,
+.section-kicker {
+  display: block;
+  margin: 0 0 4px;
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+}
+
+.header-description {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding: 9px 13px;
+  border: 1px solid #e3eaf4;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #54657c;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #20b787;
+  box-shadow: 0 0 0 3px #e5f8f1;
+}
+
+.panel {
+  border: 1px solid rgba(225, 232, 241, 0.9);
+  border-radius: 15px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.dashboard-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #eaf0f7;
+}
+
+.dashboard-tab {
+  min-height: 40px;
+  flex: 1;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #64738a;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+
+.dashboard-tab.active {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(30, 51, 84, 0.08);
+  color: var(--blue);
+}
+
+.dashboard-tab:focus-visible,
+.refresh-button:focus-visible {
+  outline: 3px solid rgba(53, 106, 230, 0.28);
+  outline-offset: 2px;
+}
+
+.upload-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 25px;
+}
+
+.upload-copy h2 {
+  font-size: 16px;
+}
+
+.upload-copy p {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#all-data-view .upload-actions {
+  flex-wrap: wrap;
+}
+
+#csv-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.file-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--blue);
+  box-shadow: 0 5px 12px rgba(53, 106, 230, 0.18);
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.file-button:hover {
+  transform: translateY(-1px);
+  background: #285bd0;
+}
+
+.refresh-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #fff;
+  color: #53647d;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.refresh-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.directory-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+#csv-file:focus-visible + .file-button {
+  outline: 3px solid rgba(53, 106, 230, 0.28);
+  outline-offset: 3px;
+}
+
+.file-name {
+  max-width: 230px;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message {
+  min-height: 21px;
+  margin: 11px 2px 14px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.message.error {
+  color: #c23b52;
+}
+
+.source-files {
+  overflow-wrap: anywhere;
+  margin: -5px 2px 14px;
+  color: #8592a4;
+  font-size: 11px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 16px;
+}
+
+.summary-card {
+  min-height: 143px;
+  padding: 18px 20px 16px;
+}
+
+.card-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #66758b;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.card-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.icon-blue {
+  background: #edf3ff;
+  color: var(--blue);
+}
+
+.icon-rose {
+  background: #fff0f2;
+  color: var(--rose);
+}
+
+.icon-green {
+  background: #e9f8f3;
+  color: var(--green);
+}
+
+.icon-amber {
+  background: #fff6e7;
+  color: var(--amber);
+}
+
+.metric-value {
+  margin: 10px 0 0;
+  color: #1b2b43;
+  font-size: clamp(25px, 3vw, 31px);
+  font-weight: 750;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+}
+
+.metric-caption {
+  margin: 6px 0 0;
+  color: #97a2b1;
+  font-size: 11px;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-panel {
+  min-width: 0;
+  min-height: 300px;
+  padding: 20px 22px;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.panel-heading h2 {
+  font-size: 16px;
+  font-weight: 720;
+}
+
+.chart-note,
+.record-count {
+  color: #8592a4;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.data-chart {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* SVG는 컨테이너 폭에 맞춰 축소되며 차트 안에 별도의 스크롤바를 만들지 않습니다. */
+.chart-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart-gridline {
+  stroke: #e9edf3;
+  stroke-width: 1;
+}
+
+.chart-axis-label,
+.chart-category-label,
+.chart-legend-label {
+  fill: #718096;
+  font-family: inherit;
+}
+
+.chart-axis-label,
+.chart-category-label {
+  font-size: 10px;
+}
+
+.chart-legend-label {
+  font-size: 11px;
+}
+
+.chart-value-label {
+  fill: #34445b;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.dense-value-label {
+  font-size: 8px;
+}
+
+.chart-bar {
+  transition: opacity 150ms ease;
+}
+
+.chart-bar:hover {
+  opacity: 0.75;
+}
+
+.chart-line {
+  stroke-linecap: round;
+}
+
+.empty-state {
+  margin: 16px 0;
+  color: #98a4b4;
+  font-size: 12px;
+  text-align: center;
+}
+
+.table-panel {
+  padding: 20px 22px 15px;
+}
+
+.table-heading {
+  margin-bottom: 15px;
+}
+
+.record-count {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #f2f5fa;
+  color: #56657a;
+  font-weight: 650;
+}
+
+.table-scroll {
+  max-height: 460px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+thead {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  background: #f6f8fb;
+}
+
+th,
+td {
+  padding: 10px 13px;
+  border-bottom: 1px solid #edf0f4;
+  text-align: left;
+}
+
+th {
+  color: #65738a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+td {
+  color: #4b5a70;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover td {
+  background: #f8faff;
+}
+
+tbody tr.ng-row td {
+  background: #fff0f1;
+  color: #8f3948;
+}
+
+tbody tr.ng-row:hover td {
+  background: #ffe7e9;
+}
+
+.table-placeholder {
+  padding: 19px;
+  color: #97a2b1;
+  font-weight: 500;
+  text-align: center;
+}
+
+.table-legend {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 11px 1px 0;
+  color: #8995a6;
+  font-size: 11px;
+}
+
+.legend-swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: #ffe7e9;
+}
+
+.page-footer {
+  padding-top: 17px;
+  color: #929eae;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* 작은 화면에서는 패널을 한 열로 쌓아 차트와 표의 읽기 폭을 확보합니다. */
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-shell {
+    width: min(100% - 28px, 480px);
+    padding-top: 22px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 19px;
+  }
+
+  .brand-mark {
+    width: 43px;
+    height: 43px;
+    flex-basis: 43px;
+    border-radius: 13px;
+  }
+
+  .header-status {
+    display: none;
+  }
+
+  .header-description {
+    max-width: 270px;
+  }
+
+  .upload-panel {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 17px;
+    padding: 18px;
+  }
+
+  .upload-actions {
+    width: 100%;
+  }
+
+  .file-name {
+    max-width: calc(100% - 145px);
+  }
+
+  .summary-grid {
+    gap: 10px;
+  }
+
+  .summary-card {
+    min-height: 133px;
+    padding: 14px;
+  }
+
+  .metric-caption {
+    font-size: 10px;
+  }
+
+  .chart-panel,
+  .table-panel {
+    padding: 17px 15px;
+  }
+
+  .chart-svg {
+    min-height: 160px;
+  }
+}

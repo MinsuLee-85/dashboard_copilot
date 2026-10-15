@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="코팅 설비 생산일지 CSV를 읽어 생산 현황을 확인하는 대시보드">
+  <title>뉴딜 공장 생산 대시보드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/dashboard.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="page-header">
+      <div class="brand-mark" aria-hidden="true">P</div>
+      <div class="header-copy">
+        <p class="eyebrow">PRODUCTION OVERVIEW</p>
+        <h1>뉴딜 공장 생산 대시보드</h1>
+        <p class="header-description">생산일지 CSV를 선택해 생산 현황과 품질을 한눈에 확인하세요.</p>
+      </div>
+      <div class="header-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        브라우저에서 안전하게 분석
+      </div>
+    </header>
+
+    <main>
+      <div class="dashboard-tabs" role="tablist" aria-label="대시보드 종류">
+        <button id="single-file-tab" class="dashboard-tab active" type="button" role="tab"
+          aria-selected="true" aria-controls="single-file-view">
+          단일 CSV 분석
+        </button>
+        <button id="all-data-tab" class="dashboard-tab" type="button" role="tab"
+          aria-selected="false" aria-controls="all-data-view">
+          전체 대시보드
+        </button>
+      </div>
+
+      <section id="single-file-view" role="tabpanel" aria-labelledby="single-file-tab">
+      <section class="upload-panel panel" aria-labelledby="upload-title">
+        <div class="upload-copy">
+          <span class="section-kicker">CSV DATA</span>
+          <h2 id="upload-title">생산일지 불러오기</h2>
+          <p>UTF-8 또는 한글 Windows(CP949)로 저장된 CSV 파일을 선택해 주세요.</p>
+        </div>
+        <div class="upload-actions">
+          <input id="csv-file" type="file" accept=".csv,text/csv">
+          <label class="file-button" for="csv-file">
+            <span aria-hidden="true">＋</span>
+            CSV 파일 선택
+          </label>
+          <span id="file-name" class="file-name">선택된 파일 없음</span>
+        </div>
+      </section>
+
+      <p id="message" class="message" role="status" aria-live="polite">
+        CSV 파일을 선택하면 설비·일자·모델별 생산량, 설비별 시간, NG 상세 데이터와 전체 목록을 확인할 수 있습니다.
+      </p>
+
+      <section class="summary-grid" aria-label="생산 요약">
+        <article class="summary-card panel">
+          <div class="card-heading">
+            <span class="card-icon icon-blue" aria-hidden="true">▤</span>
+            <span>총 롤 수</span>
+          </div>
+          <p class="metric-value" id="total-rolls">—</p>
+          <p class="metric-caption">선택한 생산일지 기준</p>
+        </article>
+        <article class="summary-card panel">
+          <div class="card-heading">
+            <span class="card-icon icon-rose" aria-hidden="true">％</span>
+            <span>불량률</span>
+          </div>
+          <p class="metric-value" id="defect-rate">—</p>
+          <p class="metric-caption">NG 롤 수 ÷ 전체 롤 수</p>
+        </article>
+        <article class="summary-card panel">
+          <div class="card-heading">
+            <span class="card-icon icon-green" aria-hidden="true">↗</span>
+            <span>가동률</span>
+          </div>
+          <p class="metric-value" id="operation-rate">—</p>
+          <p class="metric-caption">생산시간 ÷ (생산시간 + 로스시간)</p>
+        </article>
+        <article class="summary-card panel">
+          <div class="card-heading">
+            <span class="card-icon icon-amber" aria-hidden="true">◷</span>
+            <span>총 로스시간</span>
+          </div>
+          <p class="metric-value" id="total-loss">—</p>
+          <p class="metric-caption">생산일지의 로스시간 합계 (분)</p>
+        </article>
+      </section>
+
+      <section class="chart-grid" aria-label="생산 롤 및 시간 차트">
+        <article class="chart-panel panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">BY EQUIPMENT</span>
+              <h2>설비별 생산 롤 수</h2>
+            </div>
+            <span class="chart-note">설비 이름순</span>
+          </div>
+          <div id="equipment-chart" class="data-chart" aria-live="polite">
+            <p class="empty-state">CSV를 선택하면 설비별 생산량이 표시됩니다.</p>
+          </div>
+        </article>
+        <article class="chart-panel panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">BY DATE</span>
+              <h2>일자별 생산 롤 수</h2>
+            </div>
+            <span class="chart-note">오래된 날짜순</span>
+          </div>
+          <div id="daily-chart" class="data-chart" aria-live="polite">
+            <p class="empty-state">CSV를 선택하면 일자별 생산량이 표시됩니다.</p>
+          </div>
+        </article>
+        <article class="chart-panel panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">BY MODEL</span>
+              <h2>생산모델별 생산 롤 수</h2>
+            </div>
+            <span class="chart-note">생산량 많은 순</span>
+          </div>
+          <div id="model-chart" class="data-chart" aria-live="polite">
+            <p class="empty-state">CSV를 선택하면 생산모델별 생산량이 표시됩니다.</p>
+          </div>
+        </article>
+        <article class="chart-panel panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">EQUIPMENT TIME</span>
+              <h2>설비별 생산 시간 및 로스 시간</h2>
+            </div>
+            <span class="chart-note">단위: 분</span>
+          </div>
+          <div id="equipment-time-chart" class="data-chart" aria-live="polite">
+            <p class="empty-state">CSV를 선택하면 설비별 생산·로스 시간이 표시됩니다.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="table-panel panel" aria-labelledby="ng-table-title">
+        <div class="panel-heading table-heading">
+          <div>
+            <span class="section-kicker">NG DETAILS</span>
+            <h2 id="ng-table-title">NG 항목 전체 상세 데이터</h2>
+          </div>
+          <span id="ng-table-count" class="record-count">0건</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead id="ng-table-head">
+              <tr><th class="table-placeholder">CSV 파일을 선택하면 NG 상세 데이터가 표시됩니다.</th></tr>
+            </thead>
+            <tbody id="ng-table-body"></tbody>
+          </table>
+        </div>
+        <p class="table-legend"><span class="legend-swatch" aria-hidden="true"></span> 판정이 NG인 행</p>
+      </section>
+
+      <section class="table-panel panel" aria-labelledby="table-title">
+        <div class="panel-heading table-heading">
+          <div>
+            <span class="section-kicker">ROLL RECORDS</span>
+            <h2 id="table-title">전체 롤 목록</h2>
+          </div>
+          <span id="table-count" class="record-count">0건</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead id="table-head">
+              <tr><th class="table-placeholder">CSV 파일을 선택하면 전체 데이터가 표시됩니다.</th></tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+        <p class="table-legend"><span class="legend-swatch" aria-hidden="true"></span> 판정이 NG인 행</p>
+      </section>
+      </section>
+
+      <section id="all-data-view" role="tabpanel" aria-labelledby="all-data-tab" hidden>
+        <section class="upload-panel panel" aria-labelledby="all-data-title">
+          <div class="upload-copy">
+            <span class="section-kicker">ALL PRODUCTION DATA</span>
+            <h2 id="all-data-title">Product_data 전체 흐름</h2>
+            <p>Product_data 폴더를 연결하면 폴더 안의 모든 CSV를 합산합니다. 추가·수정 파일은 대시보드가 열려 있는 동안 자동으로 확인합니다.</p>
+          </div>
+          <div class="upload-actions">
+            <button id="connect-data-folder" class="file-button" type="button">Product_data 폴더 연결</button>
+            <input id="directory-files" class="directory-input" type="file" accept=".csv,text/csv" webkitdirectory multiple>
+            <label id="directory-fallback-label" class="file-button" for="directory-files" hidden>폴더 선택</label>
+            <button id="refresh-all-data" class="refresh-button" type="button" disabled>지금 새로고침</button>
+          </div>
+        </section>
+        <p id="all-data-status" class="message" role="status" aria-live="polite">
+          전체 CSV를 불러오려면 Product_data 폴더를 연결해 주세요.
+        </p>
+        <p id="all-data-files" class="source-files" aria-label="분석 중인 파일 목록"></p>
+
+        <section class="summary-grid" aria-label="전체 생산 요약">
+          <article class="summary-card panel">
+            <div class="card-heading"><span class="card-icon icon-blue" aria-hidden="true">▤</span><span>전체 롤 수</span></div>
+            <p class="metric-value" id="all-total-rolls">—</p>
+            <p class="metric-caption">Product_data의 모든 CSV</p>
+          </article>
+          <article class="summary-card panel">
+            <div class="card-heading"><span class="card-icon icon-rose" aria-hidden="true">％</span><span>전체 불량률</span></div>
+            <p class="metric-value" id="all-defect-rate">—</p>
+            <p class="metric-caption">전체 NG 롤 수 ÷ 전체 롤 수</p>
+          </article>
+          <article class="summary-card panel">
+            <div class="card-heading"><span class="card-icon icon-green" aria-hidden="true">↗</span><span>전체 가동률</span></div>
+            <p class="metric-value" id="all-operation-rate">—</p>
+            <p class="metric-caption">생산시간 ÷ 전체 작업시간</p>
+          </article>
+          <article class="summary-card panel">
+            <div class="card-heading"><span class="card-icon icon-amber" aria-hidden="true">◷</span><span>전체 로스시간</span></div>
+            <p class="metric-value" id="all-total-loss">—</p>
+            <p class="metric-caption">모든 생산일지의 로스시간 합계</p>
+          </article>
+        </section>
+
+        <section class="chart-grid" aria-label="전체 생산 흐름 차트">
+          <article class="chart-panel panel">
+            <div class="panel-heading"><div><span class="section-kicker">PRODUCTION TREND</span><h2>일자별 전체 생산 롤 수</h2></div><span class="chart-note">전체 파일 통합</span></div>
+            <div id="all-daily-chart" class="data-chart" aria-live="polite"><p class="empty-state">폴더를 연결하면 전체 일자별 생산량이 표시됩니다.</p></div>
+          </article>
+          <article class="chart-panel panel">
+            <div class="panel-heading"><div><span class="section-kicker">BY EQUIPMENT</span><h2>전체 설비별 생산 롤 수</h2></div><span class="chart-note">설비 이름순 · 전체 파일 통합</span></div>
+            <div id="all-equipment-chart" class="data-chart" aria-live="polite"><p class="empty-state">폴더를 연결하면 전체 설비별 생산량이 표시됩니다.</p></div>
+          </article>
+          <article class="chart-panel panel">
+            <div class="panel-heading"><div><span class="section-kicker">BY MODEL</span><h2>전체 생산모델별 롤 수</h2></div><span class="chart-note">전체 파일 통합</span></div>
+            <div id="all-model-chart" class="data-chart" aria-live="polite"><p class="empty-state">폴더를 연결하면 전체 모델별 생산량이 표시됩니다.</p></div>
+          </article>
+          <article class="chart-panel panel">
+            <div class="panel-heading"><div><span class="section-kicker">EQUIPMENT TIME</span><h2>전체 설비별 생산 시간 및 로스 시간</h2></div><span class="chart-note">단위: 분</span></div>
+            <div id="all-equipment-time-chart" class="data-chart" aria-live="polite"><p class="empty-state">폴더를 연결하면 전체 설비별 시간이 표시됩니다.</p></div>
+          </article>
+        </section>
+
+        <section class="table-panel panel" aria-labelledby="all-ng-table-title">
+          <div class="panel-heading table-heading">
+            <div><span class="section-kicker">NG DETAILS · ALL FILES</span><h2 id="all-ng-table-title">전체 파일 NG 상세 데이터</h2></div>
+            <span id="all-ng-table-count" class="record-count">0건</span>
+          </div>
+          <div class="table-scroll"><table><thead id="all-ng-table-head"><tr><th class="table-placeholder">폴더를 연결하면 NG 상세 데이터가 표시됩니다.</th></tr></thead><tbody id="all-ng-table-body"></tbody></table></div>
+          <p class="table-legend"><span class="legend-swatch" aria-hidden="true"></span> 판정이 NG인 행</p>
+        </section>
+
+        <section class="table-panel panel" aria-labelledby="all-table-title">
+          <div class="panel-heading table-heading">
+            <div><span class="section-kicker">ALL ROLL RECORDS</span><h2 id="all-table-title">전체 파일 생산 데이터</h2></div>
+            <span id="all-table-count" class="record-count">0건</span>
+          </div>
+          <div class="table-scroll"><table><thead id="all-table-head"><tr><th class="table-placeholder">폴더를 연결하면 모든 CSV의 데이터가 표시됩니다.</th></tr></thead><tbody id="all-table-body"></tbody></table></div>
+          <p class="table-legend"><span class="legend-swatch" aria-hidden="true"></span> 판정이 NG인 행</p>
+        </section>
+      </section>
+    </main>
+    <footer class="page-footer">선택한 파일과 폴더의 CSV는 이 브라우저 안에서만 처리되며 서버로 전송되지 않습니다.</footer>
+  </div>
+</body>
+</html>
